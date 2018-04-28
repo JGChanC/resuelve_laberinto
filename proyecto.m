@@ -14,5 +14,3 @@ imgAzulBN = rgb2gray(imgAzul);
 
 figure,imshow(imgRojaBN);
 figure,imshow(imgAzulBN);
-
-
