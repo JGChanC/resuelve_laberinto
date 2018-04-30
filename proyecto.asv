@@ -1,16 +1,27 @@
 close all;
 clear;
-im=imread('lab1.jpg');
+SEErosion = strel('square',25);
+SEDilata = strel('square',10);
+im=imread('laberintp.jpg');
 figure,imshow(im);
 
 G= im(:,:,2);
 B= im(:,:,3);
 R= im(:,:,1);
+
 imgRoja = im-G-B+R;
 imgAzul = im-G-R+B;
 
 imgRojaBN = rgb2gray(imgRoja-imgAzul);
-imgAzulBN = rgb2gray(imgAzul-imgRoja);
+im_filtRojo=imbinarize(imgRojaBN,.10);
 
-figure,imshow(imgRojaBN);
-figure,imshow(imgAzulBN);
+im_filtRojo=imerode(im_filtRojo,SEErosion);
+im_filtRojo=imdilate(im_filtRojo,SEDilata);
+figure,imshow(im_filtRojo);
+
+imgAzulBN = rgb2gray(imgAzul-imgRoja);
+im_filtAzul=imbinarize(imgAzulBN,.10);
+im_filtAzul=imerode(im_filtAzul,SEErosion);
+im_filtAzul=imdilate(im_filtAzul,SEDilata);
+figure,imshow(im_filtAzul);
+
