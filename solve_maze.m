@@ -1,21 +1,18 @@
-function [img,inicio,final] = busqueda(img,inicio,final)
+function path = solve_maze(img_file)
   %% Init data
+  img = imread(img_file);
+  img = rgb2gray(img);
   maze = img > 0;
-  
- % start = round(inicio);
- % finish = round(final);
-  start = round(inicio);
-  finish = round(final);
-  
+  start = [12 12];
+  finish = [381 190];
 
   %% Init BFS
   n = numel(maze);
   Q = zeros(n, 2);
   M = zeros([size(maze) 2]);
-    
-  back = 1;
   front = 0;
-  
+  back = 1;
+
   function push(p, d)
     q = p + d;
     if maze(q(1), q(2)) && M(q(1), q(2), 1) == 0
@@ -42,12 +39,11 @@ function [img,inicio,final] = busqueda(img,inicio,final)
   path = finish;
   while true
     q = path(end, :);
-    disp(q);
-    h=M(q(1), q(2), :);
-    p = reshape(h, 1, 2);
+    p = reshape(M(q(1), q(2), :), 1, 2);
     path(end + 1, :) = p;
     if isequal(p, start) 
       break;
     end
   end
 end
+
