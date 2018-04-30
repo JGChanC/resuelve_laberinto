@@ -10,9 +10,7 @@ imgRoja = im-G-B+R;
 imgAzul = im-G-R+B;
 
 imgRojaBN = rgb2gray(imgRoja-imgAzul);
-im_filt=imbinarize(imgRojaBN,.05);
-
 imgAzulBN = rgb2gray(imgAzul-imgRoja);
 
-figure,imshow(im_filt);
+figure,imshow(imgRojaBN);
 figure,imshow(imgAzulBN);
