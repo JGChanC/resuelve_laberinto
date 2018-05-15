@@ -2,8 +2,6 @@ function [img,inicio,final] = busqueda(img,inicio,final)
   %% Init data
   maze = img > 0;
   
- % start = round(inicio);
- % finish = round(final);
   start = round(inicio);
   finish = round(final);
   
