@@ -1,16 +1,16 @@
 close all;
 clear;
 global PathTake,global Found;
-SEErosion = strel('square',7);
-SEDilata = strel('rectangle',[8 8]);
+SEErosion = strel('square',5);
+SEDilata = strel('rectangle',[5 5]);
 
 
 
-SEAErosion = strel('rectangle',[8 8]);
-SEADilata = strel('rectangle',[10 8]);
+SEAErosion = strel('rectangle',[5 5]);
+SEADilata = strel('rectangle',[5 5]);
 %SEADilata = strel('rectangle',[4 4]);
 
-im=imread('laberinto.jpg');
+im=imread('laberinto2.jpg');
 imScalaNB=rgb2gray(im);
 imTablero2 = imbinarize(imScalaNB,.3);
 

@@ -119,7 +119,8 @@ for i=1:size(OpenList,2)
  end
  PathTake=[]; %For stroring the values taken for the path.
  if(Found==true) %further process only if there is a path
-     Policy={'Up','Left','Down','Right','Diag Down','Diag Up'};
+     %Policy={'Up','Left','Down','Right','Diag Down','Diag Up'};
+     Policy={'Up','Left','Down','Right'};
      X=goal(1);Y=goal(2);
      OptimalPath(X,Y)={'GOAL'};
      while(X~=init(1)|| Y~=init(2))
