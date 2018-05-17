@@ -1,0 +1,65 @@
+<deployment-project plugin="plugin.apptool" plugin-version="1.0">
+  <configuration build-checksum="105489699" file="C:\Users\user\Documents\MATLAB\proyecto\Resuelve lab.prj" location="C:\Users\user\Documents\MATLAB\proyecto" name="Resuelve lab" target="target.mlapps" target-name="Package App">
+    <param.appname>Resuelve lab</param.appname>
+    <param.authnamewatermark>io</param.authnamewatermark>
+    <param.email>io</param.email>
+    <param.company>io</param.company>
+    <param.icon />
+    <param.icons />
+    <param.summary>io	io</param.summary>
+    <param.description />
+    <param.screenshot />
+    <param.version>1.0</param.version>
+    <param.products.name />
+    <param.products.id />
+    <param.products.version />
+    <param.platforms />
+    <param.output>C:\Users\user\Documents\MATLAB\proyecto</param.output>
+    <param.guid>534d1294-da77-437d-8468-edc3e26cb3d6</param.guid>
+    <unset>
+      <param.icon />
+      <param.icons />
+      <param.description />
+      <param.screenshot />
+      <param.version />
+      <param.products.name />
+      <param.products.id />
+      <param.products.version />
+      <param.platforms />
+      <param.output />
+    </unset>
+    <fileset.main>
+      <file>${PROJECT_ROOT}\proyecto.m</file>
+    </fileset.main>
+    <fileset.depfun>
+      <file>${PROJECT_ROOT}\A_Star_Search.m</file>
+      <file>${PROJECT_ROOT}\CalculateHeuristic.m</file>
+      <file>${PROJECT_ROOT}\search.m</file>
+    </fileset.depfun>
+    <fileset.resources />
+    <fileset.package />
+    <build-deliverables>
+      <file location="C:\Users\user\Documents\MATLAB" name="proyecto" optional="false">C:\Users\user\Documents\MATLAB\proyecto</file>
+    </build-deliverables>
+    <workflow />
+    <matlab>
+      <root>C:\Program Files\MATLAB\R2017b</root>
+      <toolboxes />
+    </matlab>
+    <platform>
+      <unix>false</unix>
+      <mac>false</mac>
+      <windows>true</windows>
+      <win2k>false</win2k>
+      <winxp>false</winxp>
+      <vista>false</vista>
+      <linux>false</linux>
+      <solaris>false</solaris>
+      <osver>10.0</osver>
+      <os32>false</os32>
+      <os64>true</os64>
+      <arch>win64</arch>
+      <matlab>true</matlab>
+    </platform>
+  </configuration>
+</deployment-project>

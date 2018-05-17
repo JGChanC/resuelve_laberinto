@@ -5,17 +5,9 @@
 % Here eucledian distance is used.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-
 function [Heuristic]=CalculateHeuristic(grid,goal)
 
 Heuristic=zeros(size(grid));
-
-% for i=1:size(grid,1)
-%     for j=1:size(grid,2)
-%         Heuristic(i,j)=sqrt((i-goal(1))^2+(j-goal(2))^2);
-%     end
-% end
 
 for i=1:size(grid,1)
     for j=1:size(grid,2)

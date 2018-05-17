@@ -1,4 +1,3 @@
-function proyecto()
 close all;
 clear;
 global PathTake,global Found;
@@ -7,23 +6,13 @@ SEDilata = strel('rectangle',[6 6]);
 
 
 
-SEAErosion = strel('rectangle',[6 6]);
-SEADilata = strel('rectangle',[6 6]);
+SEAErosion = strel('rectangle',[10 20]);
+SEADilata = strel('rectangle',[10 28]);
 %SEADilata = strel('rectangle',[4 4]);
 %SEAErosion = strel('rectangle',[7 7]);
 %SEADilata = strel('rectangle',[7 7]);
 
-[file path] = uigetfile({
-    '*.png;*.jpg',...
-    'Imagenes'},...
-    'Seleccione el laberinto');
-if isequal(file,0)
-  return;
-else
-   disp(['User selected ', fullfile(path,file)]);
-end
-
-im=imread(fullfile(path,file));
+im=imread('laberinto.jpg');
 imScalaNB=rgb2gray(im);
 %imTablero2 = imbinarize(imScalaNB,.3);
 
@@ -110,4 +99,4 @@ else
     text(100,0,txt,'HorizontalAlignment','center','Color','red','FontSize',20)
     
 end
-end
+

@@ -5,8 +5,8 @@ cost=1;
 Found=false;
 Resign=false;
 contatiempo=0;
-global f;
-f = waitbar(contatiempo,'Por favor espere...');
+global f  waitbar(contatiempo,'Por favor espere...');
+
 
 % grid=NewGrid();
 % 
@@ -60,15 +60,10 @@ ExpansionGrid(Start.currX,Start.currY)=0;
 small=Start.gValue+Start.hValue;
  
 count=0;
-contatiempo=.33;
-
-while(Found==false || Resign==false) 
+ while(Found==false || Resign==false) 
     
- 
-    
-    
-        waitbar(contatiempo,f,'Buscando Camino.');
-    
+ contatiempo=contatiempo+.01;
+ actualizarBarra(contatiempo);
  
      
  small=OpenList(1).gValue+OpenList(1).hValue+cost;
@@ -127,7 +122,6 @@ for i=1:size(OpenList,2)
      X=goal(1);Y=goal(2);
      OptimalPath(X,Y)={'GOAL'};
      while(X~=init(1)|| Y~=init(2))
-         waitbar(.75,f,'Procesando ruta');
          x2=X-delta(ActionTaken(X,Y),1);
          y2=Y-delta(ActionTaken(X,Y),2);
          OptimalPath(x2,y2)=Policy(ActionTaken(X,Y));
@@ -155,6 +149,17 @@ for i=1:size(OpenList,2)
      Tiempo_Total=toc
  end
  
+ function actualizarBarra(tiempo)
+    aux=tiempo*10;
+    if(mod(aux,2)==0)
+        waitbar(tiempo,f,'Buscando Camino.');
+    elseif(mod(aux,3)==0)
+        waitbar(tiempo,f,'Buscando Camino..');
+    elseif(mod(aux,5)==0)
+        waitbar(tiempo,f,'Buscando Camino...');
+    end
+     
+ end
  
 end
 
