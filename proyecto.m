@@ -1,11 +1,10 @@
 function proyecto()
-close all;
+close all hidden;
+close all force;
 clear;
 global PathTake,global Found;
 SEErosion = strel('square',6);
 SEDilata = strel('rectangle',[6 6]);
-
-
 
 SEAErosion = strel('rectangle',[6 6]);
 SEADilata = strel('rectangle',[6 6]);

@@ -1,163 +1,151 @@
 
-function [PathTake, Found]=A_Star_Search(grid,init,goal)
-tic;
-cost=1;
-Found=false;
-Resign=false;
-contatiempo=0;
-global f;
-f = waitbar(contatiempo,'Por favor espere...');
+function [CaminoEncontrado, SeEncontro]=A_Star_Search(laberinto,inicio,meta)
+tic; %Iniciamos el cronomero para medir el rendimiento de busqueda
+costo=1; %Costo Inicial 
+SeEncontro=false; %Bandera que indica si se encontro el camino
+Resigno=false; %Bandera que indica que se resigno la busqueda
+contatiempo=0; %timer del progress bar
 
-% grid=NewGrid();
-% 
-% init = [1,1]; %Start
-% goal = [size(grid,1), size(grid,2)]; % Goal.
+global BarraDeCarga; %Creacion de la variable del progress bar
+BarraDeCarga = waitbar(contatiempo,'Por favor espere...'); %Creacion del objeto y mensaje de barra de carga
 
-Heuristic=CalculateHeuristic(grid,goal); %Calculate the Heuristic   
- 
-ExpansionGrid(1:size(grid,1),1:size(grid,2)) = -1; % to show the path of expansion
 
-ActionTaken=zeros(size(grid)); %Matrix to store the action taken to reach that particular cell
+Heuristica=CalculaHeuristica(laberinto,meta); %Calcula la Heuristica   
+ExpansionGrid(1:size(laberinto,1),1:size(laberinto,2)) = -1; %Visualizar el camino expandido
+AccionesTomadas=zeros(size(laberinto)); %Matriz donde se guarda las acciones que se toman to reach that particular cell
+CaminoOptimo(1:size(laberinto,1),1:size(laberinto,2))={' '}; %Camino optimo basado en el A estrella
 
-OptimalPath(1:size(grid,1),1:size(grid,2))={' '}; %Optimal Path derived from A Star
+%Como se puede mover dentro del laberinto
 
-%how to move in the grid
+movimientos = [-1,  0; % Ir Arriba
+          0, -1; % Ir a la izquierda
+          1,  0; % Ir Abajo
+          0,  1; % Ir a Derecha
+          1,  1; %Ir Diagonal Abajo
+         -1, -1];%Ir Diagonal up
 
-delta = [-1,  0; % go up
-          0, -1; % go left
-          1,  0; %go down
-          0,  1; % go right
-           1,  1; %diagonal down
-           -1, -1]; %diagonal up
- 
+contatiempo=.20;
+waitbar(contatiempo,BarraDeCarga,'Calculando Heuristica Del Laberinto');
 
- 
- for i=1:size(grid,1)
-     for j=1:size(grid,2)
-         gridCell=search();
-         if(grid(i,j)>0)
-            gridCell=gridCell.Set(i,j,1,Heuristic(i,j));
-         else
-             gridCell=gridCell.Set(i,j,0,Heuristic(i,j));
+ %Recorriendo el laberinto
+ for i=1:size(laberinto,1) %Recorriendo el laberinto por filas
+     for j=1:size(laberinto,2) %Recorriendo el laberinto por columnas
+         celdaDelLaberinto=Buscar(); %iniciando el obj de la celda
+         if(laberinto(i,j)>0) %Si el valor de la coordenada del laberito es blanco
+            celdaDelLaberinto=celdaDelLaberinto.Set(i,j,1,Heuristica(i,j)); %Se setea el valor de la celda del laberinto 
+         else %Si no
+             celdaDelLaberinto=celdaDelLaberinto.Set(i,j,0,Heuristica(i,j)); %Se setea el valor de 0 a la celda del laberinto
          end
-         GRID(i,j)=gridCell;
-         clear gridCell;
+         GRID(i,j)=celdaDelLaberinto; %Guardar la celda del laberinto en el GRID auxliar
+         clear gridCell; %Eliminar objeto creado
      end
  end
-contatiempo=.10;
-% drawEnvironment(grid,init,goal);
-waitbar(contatiempo,f,'Buscando Camino');
-Start=search();
-Start=Start.Set(init(1),init(2),grid(init(1),init(2)),Heuristic(init(1),init(2)));
-Start.isChecked=1;
-GRID(Start.currX,Start.currY).isChecked=1;
-Goal=search();
-Goal=Goal.Set(goal(1),goal(2),grid(goal(1),goal(2)),0);
  
-OpenList=[Start];
-ExpansionGrid(Start.currX,Start.currY)=0;
+%Cambiando mensaje de barra de carga
+    contatiempo=.33;
+    waitbar(contatiempo,BarraDeCarga,'Buscando Camino');
+%------------------------------------------------------
 
-small=Start.gValue+Start.hValue;
- 
-count=0;
-contatiempo=.33;
+%Objeto Inicio
+    ObjInicio=Buscar(); %Crear objeto del inicio del laberinto
+    %Setenado los valores del punto de inicio y agregando su heuristica
+    ObjInicio=ObjInicio.Set(inicio(1),inicio(2),laberinto(inicio(1),inicio(2)),Heuristica(inicio(1),inicio(2)));
+    ObjInicio.isChecked=1; %Marcando el nodo como visitado
+    GRID(ObjInicio.coorX,ObjInicio.coorY).isChecked=1; %Marcar la casilla del Grid auxialiar como visitado
+%------------------------------------------------------------------------------------------
 
-while(Found==false || Resign==false) 
-    
+%Objeto Meta
+ObjMeta=Buscar(); %Crear el objeto del nodo de la meta 
+ObjMeta=ObjMeta.Set(meta(1),meta(2),laberinto(meta(1),meta(2)),0); %Setear los valores del nodo
+%-----------------------------------------------------------------------------------------------
+
+ListaAbierta=[ObjInicio]; %anexando el punto de inicio a la lista abierta
+ExpansionGrid(ObjInicio.coorX,ObjInicio.coorY)=0; %Agregar el valor 0 al punto inicio
+
+costo_menor=ObjInicio.gValue+ObjInicio.hValue; %Sacar el valor del costo minimo
  
+contador=0; %iniciamos cotador
+contatiempo=.53; %Cambiar el valor progress bar
+
+while(SeEncontro==false || Resigno==false) %Repetir hasta que no se encuentre el camino o se resigne la busqueda
     
+  waitbar(contatiempo,BarraDeCarga,'Buscando Camino.');
     
-        waitbar(contatiempo,f,'Buscando Camino.');
-    
+ costo_menor=ListaAbierta(1).gValue+ListaAbierta(1).hValue+costo; %Calculando costo del elemento de la lista abierta
  
-     
- small=OpenList(1).gValue+OpenList(1).hValue+cost;
- 
-for i=1:size(OpenList,2)
-        fValue=OpenList(i).gValue+OpenList(i).hValue;
-        if(fValue<=small)
-            small=fValue;
-            ExpandNode=OpenList(i);
-            OpenListIndex=i;
+    for i=1:size(ListaAbierta,2)
+        fValue=ListaAbierta(i).gValue+ListaAbierta(i).hValue;
+        if(fValue<=costo_menor)
+            costo_menor=fValue;
+            NodoExpandido=ListaAbierta(i);
+            ApuntadorListaAbierta=i;
         end
     end
     
    
-    OpenList(OpenListIndex)=[];
+    ListaAbierta(ApuntadorListaAbierta)=[]; %Vaciar la lista
 
     
-    ExpansionGrid(ExpandNode.currX,ExpandNode.currY)=count;
-    count=count+1;
-    for i=1:size(delta,1)
-        direction=delta(i,:);
-        if(ExpandNode.currX+ direction(1)<1 || ExpandNode.currX+direction(1)>size(grid,1)|| ExpandNode.currY+ direction(2)<1 || ExpandNode.currY+direction(2)>size(grid,2))
+    ExpansionGrid(NodoExpandido.coorX,NodoExpandido.coorY)=contador;
+    contador=contador+1;
+    for i=1:size(movimientos,1)
+        direction=movimientos(i,:);
+        if(NodoExpandido.coorX+ direction(1)<1 || NodoExpandido.coorX+direction(1)>size(laberinto,1)|| NodoExpandido.coorY+ direction(2)<1 || NodoExpandido.coorY+direction(2)>size(laberinto,2))
             continue;
         else
-            NewCell=GRID(ExpandNode.currX+direction(1),ExpandNode.currY+direction(2));
+            NuevaCelda=GRID(NodoExpandido.coorX+direction(1),NodoExpandido.coorY+direction(2));
             
-             if(NewCell.isChecked~=1 && NewCell.isEmpty~=1)
-                GRID(NewCell.currX,NewCell.currY).gValue=GRID(ExpandNode.currX,ExpandNode.currY).gValue+cost;
-                GRID(NewCell.currX,NewCell.currY).isChecked=1; %modified line from the v1
-                OpenList=[OpenList,GRID(NewCell.currX,NewCell.currY)]; 
-                ActionTaken(NewCell.currX,NewCell.currY)=i;
+             if(NuevaCelda.isChecked~=1 && NuevaCelda.estaVacio~=1)
+                GRID(NuevaCelda.coorX,NuevaCelda.coorY).gValue=GRID(NodoExpandido.coorX,NodoExpandido.coorY).gValue+costo;
+                GRID(NuevaCelda.coorX,NuevaCelda.coorY).isChecked=1; %modified line from the v1
+                ListaAbierta=[ListaAbierta,GRID(NuevaCelda.coorX,NuevaCelda.coorY)]; 
+                AccionesTomadas(NuevaCelda.coorX,NuevaCelda.coorY)=i;
              end
             
-             if(NewCell.currX==Goal.currX && NewCell.currY==Goal.currY && NewCell.isEmpty~=1)
-                Found=true;
-                Resign=true;
+             if(NuevaCelda.coorX==ObjMeta.coorX && NuevaCelda.coorY==ObjMeta.coorY && NuevaCelda.estaVacio~=1)
+                SeEncontro=true;
+                Resigno=true;
                 disp('Busqueda correcta');
-                GRID(NewCell.currX,NewCell.currY).isChecked=1;
-                ExpansionGrid(NewCell.currX,NewCell.currY)=count;
-                GRID(NewCell.currX,NewCell.currY);
+                GRID(NuevaCelda.coorX,NuevaCelda.coorY).isChecked=1;
+                ExpansionGrid(NuevaCelda.coorX,NuevaCelda.coorY)=contador;
+                GRID(NuevaCelda.coorX,NuevaCelda.coorY);
                 break;
             end
             
         end
     end
 
-     if(isempty(OpenList) && Found==false)
-         Resign=true;
+     if(isempty(ListaAbierta) && SeEncontro==false) %Si la lista esta vacia o no se econtro el camino
+         Resigno=true; %Se resigna la busqueda
          disp('No se encontro solución');
-         break;
+         break; %Romper ciclo
      end
  end
- PathTake=[]; %For stroring the values taken for the path.
- if(Found==true) %further process only if there is a path
-     Policy={'Up','Left','Down','Right','Diag Down','Diag Up'};
-     X=goal(1);Y=goal(2);
-     OptimalPath(X,Y)={'GOAL'};
-     while(X~=init(1)|| Y~=init(2))
-         waitbar(.75,f,'Procesando ruta');
-         x2=X-delta(ActionTaken(X,Y),1);
-         y2=Y-delta(ActionTaken(X,Y),2);
-         OptimalPath(x2,y2)=Policy(ActionTaken(X,Y));
-         %figure(grid);line([x y]);
-         PathTake=[PathTake;[X,Y]];
+ CaminoEncontrado=[]; %Arreglo para guardar el camino encontrado.
+ if(SeEncontro==true) %Si se encuentra el camino
+     Politicas={'Arriba','Izquierda','Abajo','Derecha','Diag Arriba','Diag Abajo'};
+     X=meta(1); %Recuperar eje X de la meta
+     Y=meta(2); %Recuperar eje y de la meta
+     CaminoOptimo(X,Y)={'Meta'};
+     
+     while(X~=inicio(1)|| Y~=inicio(2)) %Recorrer mientas que los coordenadas no converjan
+         waitbar(.75,BarraDeCarga,'Procesando ruta'); % Cambiando el msj de la barra de cargando
+         x2=X-movimientos(AccionesTomadas(X,Y),1); %retomando acciones realizadas en x
+         y2=Y-movimientos(AccionesTomadas(X,Y),2); %retomando acciones realizadas en y
+         CaminoOptimo(x2,y2)=Politicas(AccionesTomadas(X,Y)); %Retomando camino con acciones
+         CaminoEncontrado=[CaminoEncontrado;[X,Y]]; %Registrar los puntos al arreglo de lineas 
          X=x2;
          Y=y2;
      end
-     waitbar(1,f,'Finalizando');
-     PathTake=[PathTake;[init(1),init(2)]]; % add the start state to the end
-     Tiempo_Total=toc
+     waitbar(1,BarraDeCarga,'Finalizando'); %Finalizar barra
+     CaminoEncontrado=[CaminoEncontrado;[inicio(1),inicio(2)]]; % Agregar el punto de inicio
+     Tiempo_Total=toc; %registrar el tiempo que tardo
 
-%figure;
-  %  plot(fliplr((PathTake(:,2))'),fliplr((PathTake(:,1))'));
-  %  set(gca,'XLim',[-1,size(grid,2)+2],'YLim',[-1,size(grid,1)+2]);
-  %  set(gca,'YDir','reverse');
-
-   % SmoothPath(PathTake,size(grid));
-
-%  ExpansionGrid; %to see how the expansion took place
-%     OptimalPath %to see the optimal path taken by the Search Algo
  else
-     waitbar(1,f,'Finalizando');
+     waitbar(1,BarraDeCarga,'Finalizando'); %Finalizando barra de carga
      disp('No se encontro camino');
-     Tiempo_Total=toc
+     Tiempo_Total=toc; %registrando el tiempo que tardo
  end
  
- 
+ close(BarraDeCarga);
 end
-
-
-
-
