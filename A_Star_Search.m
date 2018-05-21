@@ -95,7 +95,7 @@ while(SeEncontro==false || Resigno==false) %Repetir hasta que no se encuentre el
         else
             NuevaCelda=GRID(NodoExpandido.coorX+direction(1),NodoExpandido.coorY+direction(2));
             
-             if(NuevaCelda.isChecked~=1 && NuevaCelda.estaVacio~=1)
+             if(NuevaCelda.isChecked~=1 && NuevaCelda.estaVacio~=1) %Si es diferente a visitado o esta vacia la celda
                 GRID(NuevaCelda.coorX,NuevaCelda.coorY).gValue=GRID(NodoExpandido.coorX,NodoExpandido.coorY).gValue+costo;
                 GRID(NuevaCelda.coorX,NuevaCelda.coorY).isChecked=1; %modified line from the v1
                 ListaAbierta=[ListaAbierta,GRID(NuevaCelda.coorX,NuevaCelda.coorY)]; 
@@ -139,12 +139,12 @@ while(SeEncontro==false || Resigno==false) %Repetir hasta que no se encuentre el
      end
      waitbar(1,BarraDeCarga,'Finalizando'); %Finalizar barra
      CaminoEncontrado=[CaminoEncontrado;[inicio(1),inicio(2)]]; % Agregar el punto de inicio
-     Tiempo_Total=toc; %registrar el tiempo que tardo
+     Tiempo_Total=toc %registrar el tiempo que tardo
 
  else
      waitbar(1,BarraDeCarga,'Finalizando'); %Finalizando barra de carga
      disp('No se encontro camino');
-     Tiempo_Total=toc; %registrando el tiempo que tardo
+     Tiempo_Total=toc %registrando el tiempo que tardo
  end
  
  close(BarraDeCarga);

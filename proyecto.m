@@ -4,16 +4,16 @@ close all force;
 clear;
 global PathTake,global Found;
 SEErosion = strel('square',6);
-SEDilata = strel('rectangle',[6 6]);
+SEDilata = strel('rectangle',[8 8]);
 
-SEAErosion = strel('rectangle',[6 6]);
-SEADilata = strel('rectangle',[6 6]);
+%SEAErosion = strel('rectangle',[6 6]);
+%SEADilata = strel('rectangle',[6 6]);
 %SEADilata = strel('rectangle',[4 4]);
-%SEAErosion = strel('rectangle',[7 7]);
-%SEADilata = strel('rectangle',[7 7]);
+SEAErosion = strel('rectangle',[7 8]);
+SEADilata = strel('rectangle',[18 8]);
 
 [file path] = uigetfile({
-    '*.png;*.jpg',...
+    '*.png;*.jpg;*.jpeg',...
     'Imagenes'},...
     'Seleccione el laberinto');
 if isequal(file,0)
@@ -23,6 +23,9 @@ else
 end
 
 im=imread(fullfile(path,file));
+
+%im=imresize(im,0.4);
+
 imScalaNB=rgb2gray(im);
 %imTablero2 = imbinarize(imScalaNB,.3);
 
@@ -72,7 +75,7 @@ imTablero2=imTablero+im_filtAzul+im_filtRojo;
 
 RGB_Image = uint8( imTablero(:,:,[1 1 1]) * 255 );
 im2 = rgb2gray(RGB_Image);
-imTablero2=imcomplement(im2);
+imTablero2=imcomplement(imTablero2);
 % busqueda(im2,centroideRojo.Centroid,centroideAzul.Centroid);
 
 yE=round(centroideRojo.Centroid(:,1));
