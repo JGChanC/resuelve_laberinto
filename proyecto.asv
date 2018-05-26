@@ -6,7 +6,7 @@ close all hidden;
 close all force;
 clear;
 
-fontSize=16;
+fontSize
 
 %definir las variables globlales para pintar el camino e identificar si se
 %encontro la solucion
@@ -17,7 +17,7 @@ SEErosion = strel('square',8);
 SEDilata = strel('rectangle',[8 8]);
 
 %Filtros para la dilatacion y erosion para la componente azul
-SEAErosion = strel('rectangle',[8 8]);
+SEAErosion = strel('rectangle',[12 8]);
 SEADilata = strel('rectangle',[8 8]);
 
 continuar = true; %Opcion para identificar si el usuario desea proceder a
@@ -65,16 +65,16 @@ end
                                        
         %Si la imagen sobre pasa de las 1000 columnas se reduce su tamanio
         %a un 40%
-               
+       
         if filas>1000 || colum>1000
             im=imresize(im,.40);
         end 
        
+        figure(6),imshow(im);
         imScalaNB=rgb2gray(im);
 
         auxTablero = imbinarize(imScalaNB,.3);
-        
-        box=regionprops(imcomplement(auxTablero),'Area', 'BoundingBox'); 
+        box=regionprops(auxTablero,'Area', 'BoundingBox'); 
         imTablero = imcrop(auxTablero,box(1).BoundingBox);
         im=imcrop(im,box(1).BoundingBox);
         
@@ -97,16 +97,6 @@ end
         imgRoja = im-G-B+R; %Restando de la imagen original las componentes G y B y aumentando la componente R
         imgAzul = im-G-R+B; %Restando de la imagen original las componentes G y R y aumentando la componente B
 
-       subplot(2, 2, 2);
-	   imshow(imgRoja-imgAzul, []);
-	   title('Ubicando punto rojo', 'FontSize', fontSize);
-       
-       
-       subplot(2, 2, 3);
-	   imshow(imgAzul-imgRoja, []);
-	   title('Ubicando punto azul', 'FontSize', fontSize);
-
-            
         imgRojaBN = rgb2gray(imgRoja-imgAzul); %Restando a la imagen Roja la 
                                                %imagen azul esto para obtener solo el area que contenga Rojo
         
@@ -115,7 +105,7 @@ end
         im_filtRojo=imerode(im_filtRojo,SEErosion); %Se le aplicamos la erosion
         im_filtRojo=imdilate(im_filtRojo,SEDilata); %Se le aplica la dilatacion
 
-       
+        figure(4),imshow(im_filtRojo);
         
         centroideRojo = regionprops(im_filtRojo,'Centroid');%buscando centroide del area roja
 
@@ -137,10 +127,7 @@ end
                                                       %limpio sin las marcas de
                                                       %busqueda
 
-       subplot(2, 2, 4);
-	   imshow(imTablero2, []);
-	   title('Tablero limpio', 'FontSize', fontSize);
-       
+
         %Creamos una negativa del tablero
         imTablero2=imcomplement(imTablero2);
      
@@ -169,11 +156,6 @@ end
             
             [PathTake,Found]=A_Star_Search(imTablero2,[xE yE],[xS yS]);
 
-            figure;  % Crear otra ventana, una nueva figura en la ventana.
-            imshow(im);
-            set(gcf, 'Position', get(0,'Screensize')); % Hacerla mas grande.
-            title('Laberinto con solución', 'FontSize', fontSize);
-            
             hold on
 
             f = msgbox('Operación Completa','Mensaje','help');
@@ -195,11 +177,10 @@ end
         if strcmpi(botonera, 'NO')
             continuar = false;
         elseif strcmpi(botonera,'SI')
-            
             cargoImagen=false;
             close all hidden;
             close all force;
-           
+            clear;
         end
     
     end
