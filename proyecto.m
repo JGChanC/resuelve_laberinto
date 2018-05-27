@@ -60,23 +60,45 @@ end
         im=imread(fullfile(path,file)); 
         imScalaNB=rgb2gray(im); %Convertir la imagen a escala de grises
        
+        %Imagen BN
+        %figure(1),imshow(imScalaNB);
+        
         [filas, colum]=size(imScalaNB); %Obtenemos las filas y columnas que
                                         %Conforman a la imagen
                                        
         %Si la imagen sobre pasa de las 1000 columnas se reduce su tamanio
         %a un 40%
                
+        if filas>3000 || colum>3000
+            im=imresize(im,.15);
+            %Imagen Cambio de tamaño
+            %figure(2),imshow(im);
+        end 
+        
+        if filas>2000 || colum>2000
+            im=imresize(im,.30);
+            %Imagen Cambio de tamaño
+            %figure(2),imshow(im);
+        end 
+        
         if filas>1000 || colum>1000
-            im=imresize(im,.40);
+            disp("Entro aqui");
+            im=imresize(im,.80);
+            %Imagen Cambio de tamaño
+            %figure(2),imshow(im);
         end 
        
         imScalaNB=rgb2gray(im);
 
         auxTablero = imbinarize(imScalaNB,.3);
+         %Imagen Binaria
+        % figure(3),imshow(auxTablero);
         
         box=regionprops(imcomplement(auxTablero),'Area', 'BoundingBox'); 
         imTablero = imcrop(auxTablero,box(1).BoundingBox);
         im=imcrop(im,box(1).BoundingBox);
+        
+        %figure(4),imshow(imTablero);
         
         subplot(2, 2, 1);
         imshow(im, []);
@@ -91,8 +113,11 @@ end
 
         %Erosionando el tablero y aplicando la dilatacion para limpiar 
         %el laberinto
+       
         imTablero=imerode(imTablero,SEErosion);
         imTablero=imdilate(imTablero,SEDilata);
+        
+       
 
         imgRoja = im-G-B+R; %Restando de la imagen original las componentes G y B y aumentando la componente R
         imgAzul = im-G-R+B; %Restando de la imagen original las componentes G y R y aumentando la componente B
@@ -117,7 +142,7 @@ end
 
        
         
-        centroideRojo = regionprops(im_filtRojo,'Centroid');%buscando centroide del area roja
+        centroideRojo = regionprops(im_filtRojo,'Centroid')%buscando centroide del area roja
 
         imgAzulBN = rgb2gray(imgAzul-imgRoja);%Restando a la imagen Azul la 
                                                %imagen Roja esto para
@@ -128,7 +153,7 @@ end
         im_filtAzul=imerode(im_filtAzul,SEAErosion); %Se le aplica la erosion
         im_filtAzul=imdilate(im_filtAzul,SEADilata); %Se le aplica la dilatacion
 
-        centroideAzul = regionprops( im_filtAzul,'Centroid'); %buscando centroide del area azul
+        centroideAzul = regionprops( im_filtAzul,'Centroid') %buscando centroide del area azul
 
      
         imTablero2=imTablero+im_filtAzul+im_filtRojo; %Restando las imagenes 
@@ -143,6 +168,8 @@ end
        
         %Creamos una negativa del tablero
         imTablero2=imcomplement(imTablero2);
+        %figure(5),imshow(imTablero2);
+        %figure(6),imshow(imTablero2);
      
         try
 
