@@ -28,7 +28,7 @@ cargoImagen = false;
 limpioImagen = true;
 
 MensajeBienvenida = sprintf('Bienvenido a nuestro programa que permite resolver un laberinto \naplicando procesamiento de imagenes e inteligencia artificial.\nPor favor seleccione una opción');
-botonCacelar = questdlg(MensajeBienvenida, 'Mensaje', 'Continuar', 'Cancel', 'OK');
+botonCacelar = questdlg(MensajeBienvenida, 'Mensaje', 'Continuar', 'Cancel', 'Continuar');
 if strcmpi(botonCacelar, 'Cancel')
 	continuar = false;
 end
@@ -73,17 +73,21 @@ end
             im=imresize(im,.15);
             %Imagen Cambio de tamaño
             %figure(2),imshow(im);
-        end 
+         
         
-        if filas>2000 || colum>2000
+        elseif filas>2000 || colum>2000
             im=imresize(im,.30);
             %Imagen Cambio de tamaño
             %figure(2),imshow(im);
-        end 
+           
         
-        if filas>1000 || colum>1000
+        elseif filas>1000 || colum>1000
             disp("Entro aqui");
             im=imresize(im,.80);
+            
+        elseif filas<400 || colum<400
+            disp("Entro aqui");
+            im=imresize(im,1.40);
             %Imagen Cambio de tamaño
             %figure(2),imshow(im);
         end 
@@ -94,9 +98,11 @@ end
          %Imagen Binaria
         % figure(3),imshow(auxTablero);
         
+        %obteniendo el area y En encuadre del laberinto
         box=regionprops(imcomplement(auxTablero),'Area', 'BoundingBox'); 
-        imTablero = imcrop(auxTablero,box(1).BoundingBox);
-        im=imcrop(im,box(1).BoundingBox);
+        %Recortando el area de la foto donde se encuenta el laberinto
+        imTablero = imcrop(auxTablero,box(1).BoundingBox); %Recorte en la img binaria
+        im=imcrop(im,box(1).BoundingBox); %Recorte en la img A color
         
         %figure(4),imshow(imTablero);
         
@@ -122,14 +128,7 @@ end
         imgRoja = im-G-B+R; %Restando de la imagen original las componentes G y B y aumentando la componente R
         imgAzul = im-G-R+B; %Restando de la imagen original las componentes G y R y aumentando la componente B
 
-       subplot(2, 2, 2);
-	   imshow(imgRoja-imgAzul, []);
-	   title('Ubicando punto rojo', 'FontSize', fontSize);
-       
-       
-       subplot(2, 2, 3);
-	   imshow(imgAzul-imgRoja, []);
-	   title('Ubicando punto azul', 'FontSize', fontSize);
+      
 
             
         imgRojaBN = rgb2gray(imgRoja-imgAzul); %Restando a la imagen Roja la 
@@ -140,8 +139,11 @@ end
         im_filtRojo=imerode(im_filtRojo,SEErosion); %Se le aplicamos la erosion
         im_filtRojo=imdilate(im_filtRojo,SEDilata); %Se le aplica la dilatacion
 
+        subplot(2, 2, 2);
+	   imshow(im_filtRojo, []);
+	   title('Ubicando punto rojo', 'FontSize', fontSize);
        
-        
+              
         centroideRojo = regionprops(im_filtRojo,'Centroid')%buscando centroide del area roja
 
         imgAzulBN = rgb2gray(imgAzul-imgRoja);%Restando a la imagen Azul la 
@@ -153,6 +155,10 @@ end
         im_filtAzul=imerode(im_filtAzul,SEAErosion); %Se le aplica la erosion
         im_filtAzul=imdilate(im_filtAzul,SEADilata); %Se le aplica la dilatacion
 
+       subplot(2, 2, 3);
+	   imshow(im_filtAzul, []);
+	   title('Ubicando punto azul', 'FontSize', fontSize);
+       
         centroideAzul = regionprops( im_filtAzul,'Centroid') %buscando centroide del area azul
 
      
@@ -218,9 +224,10 @@ end
         end
 
         MensajeRepetir = sprintf('¿Desea resolver otro laberinto?');
-        botonera = questdlg(MensajeRepetir, 'Mensaje', 'SI', 'NO', 'OK');
+        botonera = questdlg(MensajeRepetir, 'Mensaje', 'SI', 'NO', 'SI');
         if strcmpi(botonera, 'NO')
             continuar = false;
+           
         elseif strcmpi(botonera,'SI')
             
             cargoImagen=false;
